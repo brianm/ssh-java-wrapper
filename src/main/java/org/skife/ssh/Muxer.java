@@ -6,6 +6,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
+import com.google.common.collect.Iterables;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+
+import static java.util.Arrays.asList;
 
 public class Muxer implements AutoCloseable
 {
@@ -48,6 +51,11 @@ public class Muxer implements AutoCloseable
     public Muxer withUser(String user)
     {
         return new Muxer(base.withUser(user), maxCachedChannels);
+    }
+
+    public Muxer withConfigFile(File file)
+    {
+        return new Muxer(base.withConfigFile(file), maxCachedChannels);
     }
 
     @Override

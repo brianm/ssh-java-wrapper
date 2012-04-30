@@ -100,8 +100,13 @@ public class SSH
         return new SSH(user, ssh, args, host, inheritOut, true);
     }
 
-    public SSH inheritStandardErr(boolean inherit)
+    public SSH withConfigFile(File file)
     {
-        return new SSH(user, ssh, args, host, inheritOut, inherit);
+        return new SSH(user,
+                       ssh,
+                       Iterables.concat(args, asList("-F", file.getAbsolutePath())),
+                       host,
+                       inheritOut,
+                       inheritErr);
     }
 }
