@@ -42,6 +42,15 @@ public class SSH
         return ProcessResult.run(inheritOut, inheritErr, argv.toArray(new String[argv.size()]));
     }
 
+    public ProcessResult scp(File from, File to) throws IOException, InterruptedException
+    {
+        List<String> argv = Lists.newArrayList("scp");
+        argv.addAll(args);
+        argv.add(from.getAbsolutePath());
+        argv.add(user + host + ":" + to.getAbsolutePath());
+        return ProcessResult.run(inheritOut, inheritErr, argv.toArray(new String[argv.size()]));
+    }
+
     public SSH withHost(String host)
     {
         return new SSH(user, ssh, args, host, inheritOut, inheritErr);

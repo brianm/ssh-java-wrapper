@@ -27,4 +27,30 @@ public class SSHTest
         String out = pr.getStdoutString();
         assertThat(out).isEqualTo("hello world\n");
     }
+
+    @Test(expected = CommandFailed.class)
+    public void testNeedleInStdout() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world'").errorIfStdoutContains("hello");
+    }
+
+    @Test(expected = CommandFailed.class)
+    public void testNeedleInStderr() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world' 1>&2").errorIfStderrContains("hello");
+    }
+
+    @Test(expected = CommandFailed.class)
+    public void testNeedleNotInStderr() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world' 1>&2").errorUnlessStderrContains("wombat");
+    }
+
+    @Test(expected = CommandFailed.class)
+    public void testNeedleNotInStdout() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world'").errorUnlessStdoutContains("wombat");
+    }
+
+
 }

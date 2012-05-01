@@ -6,6 +6,7 @@ import com.google.common.io.InputSupplier;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.regex.Pattern;
 
 public class ProcessResult
 {
@@ -95,4 +96,49 @@ public class ProcessResult
             return "ProcessResult IOException: " + e.getMessage();
         }
     }
+
+
+    public ProcessResult errorUnlessStdoutContains(String needle) throws IOException
+    {
+        if (this.getStdoutString().contains(needle)) {
+            return this;
+        }
+        else {
+            throw new CommandFailed("Expected '" + needle + "' in stdout, but it was not present:\n"
+                                    + getStdoutString());
+        }
+    }
+
+    public ProcessResult errorIfStdoutContains(String needle) throws IOException
+    {
+        if (this.getStdoutString().contains(needle)) {
+            throw new CommandFailed("Found '" + needle + "' in stdout:\n"
+                                    + getStdoutString());
+        }
+        else {
+            return this;
+        }
+    }
+    public ProcessResult errorUnlessStderrContains(String needle) throws IOException
+    {
+        if (this.getStderrString().contains(needle)) {
+            return this;
+        }
+        else {
+            throw new CommandFailed("Expected '" + needle + "' in stderr, but it was not present:\n"
+                                    + getStderrString());
+        }
+    }
+
+    public ProcessResult errorIfStderrContains(String needle) throws IOException
+    {
+        if (this.getStderrString().contains(needle)) {
+            throw new CommandFailed("Found '" + needle + "' in stderr:\n"
+                                    + getStderrString());
+        }
+        else {
+            return this;
+        }
+    }
+
 }
