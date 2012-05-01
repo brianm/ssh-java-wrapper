@@ -52,5 +52,16 @@ public class SSHTest
         SSH.toHost("localhost").exec("echo 'hello world'").errorUnlessStdoutContains("wombat");
     }
 
+    @Test(expected = CommandFailed.class)
+    public void testErrorIfExitIn() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world'").errorIfExitIn(0);
+    }
+
+    @Test(expected = CommandFailed.class)
+    public void testErrorUnlessExitIn() throws Exception
+    {
+        SSH.toHost("localhost").exec("echo 'hello world'").errorUnlessExitIn(1,2,3);
+    }
 
 }

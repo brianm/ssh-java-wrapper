@@ -6,6 +6,7 @@ import com.google.common.io.InputSupplier;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class ProcessResult
@@ -95,6 +96,26 @@ public class ProcessResult
         catch (IOException e) {
             return "ProcessResult IOException: " + e.getMessage();
         }
+    }
+
+    public ProcessResult errorUnlessExitIn(int... exits)
+    {
+        for (int exit : exits) {
+            if (this.exitCode == exit) {
+                return this;
+            }
+        }
+        throw new CommandFailed("Expected exit code in " + Arrays.toString(exits) + " but it was " + exitCode);
+    }
+
+    public ProcessResult errorIfExitIn(int... exits)
+    {
+        for (int exit : exits) {
+            if (this.exitCode == exit) {
+                throw new CommandFailed("exit code " + exitCode + " in " + Arrays.toString(exits));
+            }
+        }
+        return this;
     }
 
 
