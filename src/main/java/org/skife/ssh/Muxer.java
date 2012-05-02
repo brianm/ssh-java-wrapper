@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.collect.Iterables;
+import com.google.common.io.Files;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,6 +36,10 @@ public class Muxer implements AutoCloseable
                               .build(new MasterLoader());
     }
 
+
+    public static Muxer withSocketsInTempDir() {
+        return withSocketsIn(Files.createTempDir());
+    }
 
     public static Muxer withSocketsIn(File dir)
     {
