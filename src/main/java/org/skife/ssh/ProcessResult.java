@@ -7,6 +7,12 @@ import com.google.common.io.InputSupplier;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 public class ProcessResult
@@ -34,14 +40,38 @@ public class ProcessResult
             pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         }
 
-        Process p = pb.start();
-        int exit = p.waitFor();
+        ExecutorService es = Executors.newFixedThreadPool(2);
+        try {
+            final Process p = pb.start();
+            Future<byte[]> stdout = es.submit(new Callable<byte[]>()
+            {
+                @Override
+                public byte[] call() throws Exception
+                {
+                    return ByteStreams.toByteArray(p.getInputStream());
+                }
+            });
+
+            Future<byte[]> stderr = es.submit(new Callable<byte[]>()
+            {
+                @Override
+                public byte[] call() throws Exception
+                {
+                    return ByteStreams.toByteArray(p.getErrorStream());
+                }
+            });
+
+            int exit = p.waitFor();
+            return new ProcessResult(exit, stdout.get(), stderr.get());
+        }
+        catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            es.shutdown();
+        }
 
 
-        byte[] stdout = ByteStreams.toByteArray(p.getInputStream());
-        byte[] stderr = ByteStreams.toByteArray(p.getErrorStream());
-
-        return new ProcessResult(exit, stdout, stderr);
     }
 
     ProcessResult explodeOnError()
@@ -140,6 +170,7 @@ public class ProcessResult
             return this;
         }
     }
+
     public ProcessResult errorUnlessStderrContains(String needle) throws IOException
     {
         if (this.getStderrString().contains(needle)) {
