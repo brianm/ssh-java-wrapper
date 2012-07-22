@@ -3,7 +3,7 @@
     <groupId>org.skife.ssh</groupId>
     <artifactId>ssh-java-wrapper</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <name>ssh-java-wrapper</name>
     <url>http://github.com/brianm/ssh-java-wrapper</url>
     <description>
