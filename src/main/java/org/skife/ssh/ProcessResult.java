@@ -135,14 +135,15 @@ public class ProcessResult
                 return this;
             }
         }
-        throw new CommandFailed("Expected exit code in " + Arrays.toString(exits) + " but it was " + exitCode);
+
+        throw new CommandFailed("Expected exit code in " + Arrays.toString(exits) + " but it was " + exitCode + "\n" + new String(this.getStderr()));
     }
 
     public ProcessResult errorIfExitIn(int... exits)
     {
         for (int exit : exits) {
             if (this.exitCode == exit) {
-                throw new CommandFailed("exit code " + exitCode + " in " + Arrays.toString(exits));
+                throw new CommandFailed("exit code " + exitCode + " in " + Arrays.toString(exits) + "\n" + new String(this.getStderr()));
             }
         }
         return this;
